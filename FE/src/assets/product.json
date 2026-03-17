@@ -1,0 +1,175 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "code": "bat-dia",
+      "name": "Bát Đĩa"
+    },
+    {
+      "id": 2,
+      "code": "chao",
+      "name": "Chảo"
+    },
+    {
+      "id": 3,
+      "code": "dao",
+      "name": "Dao"
+    },
+    {
+      "id": 4,
+      "code": "dua",
+      "name": "Đũa & Muỗng"
+    },
+    {
+      "id": 5,
+      "code": "noi",
+      "name": "Nồi"
+    }
+  ],
+  "bestSelling": [
+    {
+      "id": 1,
+      "name": "Chảo Chống Dính Cao Cấp",
+      "price": "450.000 VNĐ",
+      "image": "./img/chao1.jpg",
+      "soldCount": {
+        "day": 5,
+        "month": 150,
+        "year": 1800
+      },
+      "category": "chao"
+    },
+    {
+      "id": 2,
+      "name": "Dao Bếp Thép Không Gỉ",
+      "price": "200.000 VNĐ",
+      "image": "./img/dao1.jpg",
+      "soldCount": {
+        "day": 6,
+        "month": 200,
+        "year": 2400
+      },
+      "category": "dao"
+    },
+    {
+      "id": 3,
+      "name": "Bộ Đũa Inox",
+      "price": "100.000 VNĐ",
+      "image": "./img/dua1.jpg",
+      "soldCount": {
+        "day": 4,
+        "month": 120,
+        "year": 1440
+      },
+      "category": "dua"
+    },
+    {
+      "id": 4,
+      "name": "Bát Đĩa Sứ Cao Cấp",
+      "price": "300.000 VNĐ",
+      "image": "./img/batdia1.jpg",
+      "soldCount": {
+        "day": 6,
+        "month": 180,
+        "year": 2160
+      },
+      "category": "bat-dia"
+    },
+    {
+      "id": 5,
+      "name": "Nồi Nấu Ăn Đa Năng",
+      "price": "500.000 VNĐ",
+      "image": "./img/noi1.jpg",
+      "soldCount": {
+        "day": 3,
+        "month": 90,
+        "year": 1080
+      },
+      "category": "noi"
+    },
+    {
+      "id": 6,
+      "name": "Chảo Rán Lớn",
+      "price": "350.000 VNĐ",
+      "image": "./img/chao2.jpg",
+      "soldCount": {
+        "day": 4,
+        "month": 140,
+        "year": 1680
+      },
+      "category": "chao"
+    },
+    {
+      "id": 7,
+      "name": "Dao Thái Rau",
+      "price": "150.000 VNĐ",
+      "image": "./img/dao2.jpg",
+      "soldCount": {
+        "day": 7,
+        "month": 220,
+        "year": 2640
+      },
+      "category": "dao"
+    },
+    {
+      "id": 8,
+      "name": "Muỗng Inox",
+      "price": "80.000 VNĐ",
+      "image": "./img/dua2.jpg",
+      "soldCount": {
+        "day": 3,
+        "month": 110,
+        "year": 1320
+      },
+      "category": "dua"
+    },
+    {
+      "id": 9,
+      "name": "Đĩa Ăn Sứ",
+      "price": "250.000 VNĐ",
+      "image": "./img/batdia2.jpg",
+      "soldCount": {
+        "day": 5,
+        "month": 160,
+        "year": 1920
+      },
+      "category": "bat-dia"
+    },
+    {
+      "id": 10,
+      "name": "Nồi Áp Suất",
+      "price": "600.000 VNĐ",
+      "image": "./img/noi2.jpg",
+      "soldCount": {
+        "day": 3,
+        "month": 100,
+        "year": 1200
+      },
+      "category": "noi"
+    },
+    {
+      "id": 11,
+      "name": "Chảo Wok",
+      "price": "400.000 VNĐ",
+      "image": "./img/chao3.jpg",
+      "soldCount": {
+        "day": 4,
+        "month": 130,
+        "year": 1560
+      },
+      "category": "chao"
+    },
+    {
+      "id": 12,
+      "name": "Dao Cắt Thịt",
+      "price": "180.000 VNĐ",
+      "image": "./img/dao3.jpg",
+      "soldCount": {
+        "day": 6,
+        "month": 190,
+        "year": 2280
+      },
+      "category": "dao"
+    }
+  ]
+}

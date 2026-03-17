@@ -1,0 +1,251 @@
+{
+  "product": [
+    {
+      "name": "Chảo Chống Dính Cao Cấp",
+      "category": "chao",
+      "price": 450000,
+      "stock": 3,
+      "image": "./img/products/am-dun-nuoc-inox-25-lit-11-600x600.webp",
+      "description": "Chảo chống dính tiện dụng",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "id": "1"
+    },
+    {
+      "id": "4",
+      "name": "Bát Đĩa Sứ Cao Cấp",
+      "category": "bat-dia",
+      "price": 300000,
+      "image": "./img/products/khay-up-ly-inox-doi-22x32cm-1-600x600.webp",
+      "description": "Bát đĩa sứ cao cấp",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.7,
+      "reviews_count": 12
+    },
+    {
+      "id": "5",
+      "name": "Nồi Nấu Ăn Đa Năng",
+      "category": "noi",
+      "price": 500000,
+      "image": "./img/products/met-tre-10-size-2-600x600.jpg",
+      "description": "Nồi đa năng tiện dụng",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.4,
+      "reviews_count": 30
+    },
+    {
+      "id": "6",
+      "name": "Chảo Rán Lớn",
+      "category": "chao",
+      "price": 350000,
+      "image": "./img/products/nhip-xuong-ca-xeo-yg12x-2-600x600.jpg",
+      "description": "Chảo rán kích thước lớn",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.3,
+      "reviews_count": 14
+    },
+    {
+      "id": "7",
+      "name": "Dao Thái Rau",
+      "category": "dao",
+      "price": 150000,
+      "image": "./img/products/phoi-tron-bot-spatula-silicon-gjd01-1-300x300.jpg",
+      "description": "Dao thái rau nhỏ gọn",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.5,
+      "reviews_count": 22
+    },
+    {
+      "id": "8",
+      "name": "Muỗng Inox",
+      "category": "dua",
+      "price": 80000,
+      "image": "./img/products/va-com-inox-2-size-2-600x600.jpg",
+      "description": "Muỗng inox bền",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.2,
+      "reviews_count": 10
+    },
+    {
+      "id": "9",
+      "name": "Đĩa Ăn Sứ",
+      "category": "bat-dia",
+      "price": 250000,
+      "image": "./img/products/va-xao-inox-can-go-186355-1-600x600.jpg",
+      "description": "Đĩa ăn sứ đẹp mắt",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.1,
+      "reviews_count": 18
+    },
+    {
+      "id": "10",
+      "name": "Nồi Áp Suất",
+      "category": "noi",
+      "price": 600000,
+      "image": "./img/products/va-xao-inox-can-go-co-lo-186354-1-600x600.jpg",
+      "description": "Nồi áp suất chất lượng",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.6,
+      "reviews_count": 40
+    },
+    {
+      "id": "11",
+      "name": "Chảo Wok",
+      "category": "chao",
+      "price": 400000,
+      "image": "./img/products/am-dun-nuoc-inox-25-lit-11-600x600.webp",
+      "description": "Chảo Wok dùng cho xào",
+      "onSale": false,
+      "orderDiscount": false,
+      "freeShipping": false,
+      "rating": 4.4,
+      "reviews_count": 27
+    }
+  ],
+  "category": [
+    {
+      "id": "chao",
+      "name": "Chảo"
+    },
+    {
+      "id": "dao",
+      "name": "Dao"
+    },
+    {
+      "id": "dua",
+      "name": "Đũa & Muỗng"
+    },
+    {
+      "id": "bat-dia",
+      "name": "Bát Đĩa"
+    },
+    {
+      "id": "noi",
+      "name": "Nồi"
+    }
+  ],
+  "user": [
+    {
+      "id": "1",
+      "email": "admin@senvang.vn",
+      "password": "admin",
+      "name": "Admin User",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "email": "khachhang@gmail.com",
+      "password": "123",
+      "name": "Nguyễn Văn A",
+      "phone": "0901234567",
+      "address": "123 Đường ABC, Quận 1, TP.HCM",
+      "role": "customer"
+    },
+    {
+      "id": "d0a0",
+      "name": "neko neko",
+      "email": "necon12398@gmail.com",
+      "password": "123123",
+      "phone": "344545",
+      "address": "",
+      "role": "customer"
+    },
+    {
+      "id": "fdfc",
+      "name": "neko neko",
+      "email": "necon12398@gmail.com",
+      "password": "123123",
+      "phone": "344545",
+      "address": "",
+      "role": "customer"
+    }
+  ],
+  "order": [
+    {
+      "id": "DH172001",
+      "userId": 2,
+      "date": "2025-11-18",
+      "status": "pending",
+      "total": 1200000,
+      "items": [
+        {
+          "productId": 2,
+          "name": "Bộ Dao Bếp 6 Món",
+          "quantity": 1,
+          "price": 1200000,
+          "image": "uploads/products/sp2.png"
+        }
+      ]
+    },
+    {
+      "id": "DH172002",
+      "userId": 2,
+      "date": "2025-11-15",
+      "status": "shipping",
+      "total": 890000,
+      "items": [
+        {
+          "productId": 5,
+          "name": "Nồi Inox 3 Đáy",
+          "quantity": 1,
+          "price": 890000,
+          "image": "uploads/products/sp5.png"
+        }
+      ]
+    },
+    {
+      "id": "DH172003",
+      "userId": 2,
+      "date": "2025-11-10",
+      "status": "delivered",
+      "total": 2350000,
+      "items": [
+        {
+          "productId": 1,
+          "name": "Chảo Chống Dính Cao Cấp",
+          "quantity": 1,
+          "price": 550000,
+          "image": "uploads/products/sp1.png"
+        },
+        {
+          "productId": 7,
+          "name": "Dao Santoku Nhật Bản",
+          "quantity": 1,
+          "price": 1800000,
+          "image": "uploads/products/sp7.png"
+        }
+      ]
+    },
+    {
+      "id": "DH172004",
+      "userId": 2,
+      "date": "2025-11-05",
+      "status": "cancelled",
+      "total": 2500000,
+      "items": [
+        {
+          "productId": 4,
+          "name": "Bộ Bát Đĩa Sứ Xương",
+          "quantity": 1,
+          "price": 2500000,
+          "image": "uploads/products/sp4.png"
+        }
+      ]
+    }
+  ]
+}

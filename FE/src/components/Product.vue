@@ -35,28 +35,26 @@ const fetchProducts = async () => {
 
     // Get categories
     const categoryList = (dataRoot?.categories || [])
-      .filter(
-        (cat) =>
-          cat.code && typeof cat.code === "string" && cat.code.length < 20
-      )
       .map((cat) => ({
-        code: cat.code.toLowerCase(),
+        code: (cat.code || cat.id || String(cat._id || "")).toLowerCase(),
         name: cat.name,
-      }));
+      }))
+      .filter((cat) => cat.code && cat.name);
 
     categories.value = categoryList;
 
     // Get products and map category
     const apiProducts = dataRoot?.bestSelling || [];
-    products.value = apiProducts.map((product) => {
+    const mappedProducts = apiProducts.map((product) => {
       let categoryCode = "all";
       if (product.category) {
+        const pCat = String(product.category).toLowerCase();
         const foundCat = categoryList.find(
-          (cat) => cat.name.toLowerCase() === product.category.toLowerCase()
+          (cat) => 
+            cat.name.toLowerCase() === pCat || 
+            cat.code.toLowerCase() === pCat
         );
-        categoryCode = foundCat
-          ? foundCat.code
-          : product.category.toLowerCase();
+        categoryCode = foundCat ? foundCat.code : pCat;
       }
 
       return {
@@ -68,6 +66,14 @@ const fetchProducts = async () => {
         soldCount: product.soldCount,
       };
     });
+
+    products.value = mappedProducts;
+
+    // Add counts to categories
+    categories.value = categoryList.map(cat => ({
+      ...cat,
+      count: mappedProducts.filter(p => p.category === cat.code).length
+    }));
 
     console.log("Products loaded:", products.value);
   } catch (err) {
@@ -120,16 +126,20 @@ onMounted(() => {
               <a
                 @click.prevent="selectedCategory = 'all'"
                 :class="{ active: selectedCategory === 'all' }"
+                class="category-link"
               >
-                Tất Cả
+                <span class="category-name">Tất Cả</span>
+                <span class="category-count">{{ products.length }}</span>
               </a>
             </li>
             <li v-for="cat in categories" :key="cat.code">
               <a
                 @click.prevent="selectedCategory = cat.code"
                 :class="{ active: selectedCategory === cat.code }"
+                class="category-link"
               >
-                {{ cat.name }}
+                <span class="category-name">{{ cat.name }}</span>
+                <span class="category-count">{{ cat.count || 0 }}</span>
               </a>
             </li>
           </ul>
@@ -263,20 +273,45 @@ main {
   color: #666;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: block;
-  padding: 0.5rem;
-  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 0.25rem;
+  border: 1px solid transparent;
 }
 
 .sidebar a:hover {
   color: var(--secondary-color);
-  background: rgba(255, 165, 0, 0.1);
+  background: rgba(255, 165, 0, 0.05);
+  border-color: rgba(255, 165, 0, 0.1);
 }
 
 .sidebar a.active {
-  color: var(--secondary-color);
+  color: var(--white);
   font-weight: 700;
-  background: rgba(255, 165, 0, 0.2);
+  background: var(--secondary-color);
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+}
+
+.category-count {
+  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: #888;
+  transition: all 0.3s ease;
+}
+
+.sidebar a.active .category-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+}
+
+.sidebar a:hover .category-count {
+  background: rgba(255, 165, 0, 0.1);
+  color: var(--secondary-color);
 }
 
 .main-content {

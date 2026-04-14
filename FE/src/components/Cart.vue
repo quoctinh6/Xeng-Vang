@@ -27,7 +27,7 @@
                 :data-product-id="item.id"
               >
                 <img
-                  :src="item.image"
+                  :src="resolveImage(item.image)"
                   :alt="item.name"
                   class="cart-item-image"
                 />
@@ -153,52 +153,22 @@
         <div class="suggested-products">
           <h3>Có Thể Bạn Sẽ Thích</h3>
           <div class="product-grid">
-            <div class="product-card">
+            <div
+              v-for="p in suggestedProducts"
+              :key="p.id"
+              class="product-card"
+              @click="viewDetail(p)"
+              style="cursor: pointer"
+            >
               <img
-                src="https://via.placeholder.com/300x250.png?text=Bộ+Nồi"
-                alt="Bộ Nồi"
+                :src="resolveImage(p.image || p.img)"
+                :alt="p.name"
                 class="product-image"
               />
               <div class="product-info">
-                <h4 class="product-name">Bộ Nồi Inox 3 Đáy</h4>
-                <p class="product-price">1,200,000đ</p>
-                <button class="add-to-cart-btn">Thêm vào giỏ</button>
-              </div>
-            </div>
-            <div class="product-card">
-              <img
-                src="https://via.placeholder.com/300x250.png?text=Bát+Đĩa"
-                alt="Bát Đĩa"
-                class="product-image"
-              />
-              <div class="product-info">
-                <h4 class="product-name">Bộ Bát Đĩa Sứ</h4>
-                <p class="product-price">580,000đ</p>
-                <button class="add-to-cart-btn">Thêm vào giỏ</button>
-              </div>
-            </div>
-            <div class="product-card">
-              <img
-                src="https://via.placeholder.com/300x250.png?text=Muỗng"
-                alt="Muỗng"
-                class="product-image"
-              />
-              <div class="product-info">
-                <h4 class="product-name">Muỗng Gỗ Tự Nhiên</h4>
-                <p class="product-price">85,000đ</p>
-                <button class="add-to-cart-btn">Thêm vào giỏ</button>
-              </div>
-            </div>
-            <div class="product-card">
-              <img
-                src="https://via.placeholder.com/300x250.png?text=Chảo+32cm"
-                alt="Chảo 32cm"
-                class="product-image"
-              />
-              <div class="product-info">
-                <h4 class="product-name">Chảo Chống Dính 32cm</h4>
-                <p class="product-price">550,000đ</p>
-                <button class="add-to-cart-btn">Thêm vào giỏ</button>
+                <h4 class="product-name">{{ p.name }}</h4>
+                <p class="product-price">{{ p.price }}</p>
+                <button class="add-to-cart-btn">Xem chi tiết</button>
               </div>
             </div>
           </div>
@@ -218,13 +188,34 @@ const appliedVoucher = ref(null);
 const shipping = ref(30000);
 const discount = ref(0);
 
-onMounted(() => {
+const suggestedProducts = ref([]);
+
+onMounted(async () => {
   try {
     cart.value = JSON.parse(localStorage.getItem("cart") || "[]");
   } catch (e) {
     cart.value = [];
   }
+
+  // Fetch suggested products
+  try {
+    const resp = await fetch("http://localhost:3000/api/products");
+    if (resp.ok) {
+      const data = await resp.json();
+      const rawData = Array.isArray(data) ? data[0] : data;
+      const apiProducts = rawData?.bestSelling || [];
+      // Just take 4 random/first ones for suggestion
+      suggestedProducts.value = apiProducts.slice(0, 4);
+    }
+  } catch (e) {
+    console.error("Lỗi tải sản phẩm gợi ý:", e);
+  }
 });
+
+function viewDetail(p) {
+  sessionStorage.setItem("selectedProduct", JSON.stringify(p));
+  router.push({ name: "ProductDetail", params: { id: p.id } });
+}
 
 watch(
   cart,
@@ -233,6 +224,14 @@ watch(
   },
   { deep: true }
 );
+
+function resolveImage(path) {
+  if (!path) return "https://via.placeholder.com/300x250?text=No+Image";
+  if (typeof path !== "string") return "https://via.placeholder.com/300x250?text=No+Image";
+  if (path.startsWith("http")) return path;
+  let filename = path.split("/").pop();
+  return `http://localhost:3000/img/products/${filename}`;
+}
 
 function updateQuantity(id, delta = 0) {
   const item = cart.value.find((i) => i.id === id);

@@ -1,3 +1,126 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+const product = ref(null);
+const quantity = ref(1);
+const mainImage = ref("");
+const activeTab = ref("description");
+const relatedProducts = ref([]);
+const thumbnails = ref([
+    'https://via.placeholder.com/100x100.png?text=1',
+]);
+
+const resolveImage = (path) => {
+  if (!path) return "https://via.placeholder.com/600x500?text=No+Image";
+  if (path.startsWith("http")) return path;
+  let filename = path.split("/").pop();
+  return `http://localhost:3000/img/products/${filename}`;
+};
+
+onMounted(async () => {
+    // Load related products
+    try {
+        const resp = await fetch(`http://localhost:3000/api/products`);
+        if (resp.ok) {
+            const data = await resp.json();
+            const rawData = Array.isArray(data) ? data[0] : data;
+            const apiProducts = rawData?.bestSelling || [];
+            
+            // Current product logic
+            const storedProduct = sessionStorage.getItem("selectedProduct");
+            if (storedProduct) {
+                product.value = JSON.parse(storedProduct);
+            } else {
+                const id = route.params.id;
+                const found = apiProducts.find(p => p.id == id);
+                if (found) product.value = found;
+            }
+
+            if (product.value) {
+                mainImage.value = resolveImage(product.value.image || product.value.img);
+                thumbnails.value[0] = mainImage.value;
+                
+                // Filter related products by category
+                relatedProducts.value = apiProducts
+                    .filter(p => p.id !== product.value.id && p.category === product.value.category)
+                    .slice(0, 4);
+                
+                // If not enough related products in category, take others
+                if (relatedProducts.value.length < 4) {
+                    const extra = apiProducts
+                        .filter(p => p.id !== product.value.id && p.category !== product.value.category)
+                        .slice(0, 4 - relatedProducts.value.length);
+                    relatedProducts.value = [...relatedProducts.value, ...extra];
+                }
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+  
+  if (!product.value) {
+     product.value = {
+        id: route.params.id || 1,
+        name: "Sản phẩm không có sẵn",
+        price: "0đ",
+        image: ""
+     };
+     mainImage.value = resolveImage("");
+  }
+});
+
+const viewDetail = (p) => {
+    sessionStorage.setItem("selectedProduct", JSON.stringify(p));
+    // Use window.location or router push. Since we are in the same component, 
+    // router.push might not trigger re-mount unless we watch the route.
+    router.push({ name: 'ProductDetail', params: { id: p.id } }).then(() => {
+        window.location.reload(); // Force refresh to update data easily
+    });
+};
+
+const changeImage = (src) => {
+  mainImage.value = src;
+};
+
+const increaseQuantity = () => {
+  if (quantity.value < 10) quantity.value++;
+};
+const decreaseQuantity = () => {
+  if (quantity.value > 1) quantity.value--;
+};
+
+const addToCart = () => {
+  if (!product.value) return;
+  try {
+    const raw = localStorage.getItem("cart") || "[]";
+    const cart = JSON.parse(raw);
+    const existing = cart.find((p) => p.id === product.value.id);
+    if (existing) {
+      existing.qty = (existing.qty || 1) + quantity.value;
+    } else {
+      cart.push({
+        id: product.value.id,
+        name: product.value.name,
+        price: product.value.price,
+        image: product.value.image || product.value.img,
+        qty: quantity.value,
+      });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Đã thêm vào giỏ hàng!");
+  } catch (e) {
+    console.error("Lỗi lưu giỏ hàng:", e);
+  }
+};
+
+const switchTab = (tab) => {
+    activeTab.value = tab;
+};
+</script>
+
 <template>
     <main>
         <!-- Breadcrumb -->
@@ -17,23 +140,17 @@
                 <div class="product-detail-grid">
                     <!-- Product Images -->
                     <div class="product-images">
-                        <img src="https://via.placeholder.com/600x500.png?text=Sản+Phẩm" alt="Sản phẩm"
+                        <img :src="mainImage" :alt="product?.name"
                             class="main-image" id="mainImage">
                         <div class="thumbnail-images">
-                            <img src="https://via.placeholder.com/100x100.png?text=1" alt="Hình 1"
-                                class="thumbnail active" onclick="changeImage(this.src)">
-                            <img src="https://via.placeholder.com/100x100.png?text=2" alt="Hình 2" class="thumbnail"
-                                onclick="changeImage(this.src)">
-                            <img src="https://via.placeholder.com/100x100.png?text=3" alt="Hình 3" class="thumbnail"
-                                onclick="changeImage(this.src)">
-                            <img src="https://via.placeholder.com/100x100.png?text=4" alt="Hình 4" class="thumbnail"
-                                onclick="changeImage(this.src)">
+                            <img v-for="(img, idx) in thumbnails" :key="idx" :src="img" :alt="'Hình ' + (idx + 1)"
+                                class="thumbnail" :class="{ active: mainImage === img }" @click="changeImage(img)">
                         </div>
                     </div>
 
                     <!-- Product Info -->
                     <div class="product-info">
-                        <h1 class="product-title">Chảo Chống Dính Cao Cấp 28cm</h1>
+                        <h1 class="product-title">{{ product?.name || 'Đang tải...' }}</h1>
 
                         <div class="product-rating">
                             <div class="stars">
@@ -47,10 +164,10 @@
                         </div>
 
                         <div class="product-price-section">
-                            <div class="product-price">450,000đ</div>
+                            <div class="product-price">{{ product?.price || '0đ' }}</div>
                             <div>
-                                <span class="product-old-price">550,000đ</span>
-                                <span class="product-discount">-18%</span>
+                                <span class="product-old-price"></span>
+                                <span class="product-discount">HOT</span>
                             </div>
                         </div>
 
@@ -59,39 +176,19 @@
                             dễ vệ sinh và bền bỉ. Phù hợp cho mọi loại bếp gas, điện, từ tính.
                         </p>
 
-                        <!-- Product Options -->
-                        <div class="product-options">
-                            <div class="option-group">
-                                <label class="option-label">Kích thước:</label>
-                                <div class="option-buttons">
-                                    <button class="option-btn active">24cm</button>
-                                    <button class="option-btn">28cm</button>
-                                    <button class="option-btn">32cm</button>
-                                </div>
-                            </div>
-                            <div class="option-group">
-                                <label class="option-label">Màu sắc:</label>
-                                <div class="option-buttons">
-                                    <button class="option-btn active">Đỏ</button>
-                                    <button class="option-btn">Xanh</button>
-                                    <button class="option-btn">Đen</button>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Quantity Selector -->
                         <div class="quantity-selector">
                             <label class="option-label">Số lượng:</label>
                             <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
-                                <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="10">
-                                <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                                <button class="quantity-btn" @click="decreaseQuantity">-</button>
+                                <input type="number" class="quantity-input" id="quantity" v-model="quantity" min="1" max="10">
+                                <button class="quantity-btn" @click="increaseQuantity">+</button>
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
                         <div class="action-buttons">
-                            <button class="btn-primary" onclick="addToCart()">
+                            <button class="btn-primary" @click="addToCart">
                                 <i class="bi bi-cart-plus"></i>
                                 Thêm vào giỏ hàng
                             </button>
@@ -122,12 +219,12 @@
                 <!-- Product Tabs -->
                 <div class="product-tabs">
                     <div class="tabs-header">
-                        <button class="tab-btn active" onclick="switchTab('description')">Mô tả</button>
-                        <button class="tab-btn" onclick="switchTab('specs')">Thông số kỹ thuật</button>
-                        <button class="tab-btn" onclick="switchTab('reviews')">Đánh giá (128)</button>
+                        <button class="tab-btn" :class="{ active: activeTab === 'description' }" @click="switchTab('description')">Mô tả</button>
+                        <button class="tab-btn" :class="{ active: activeTab === 'specs' }" @click="switchTab('specs')">Thông số kỹ thuật</button>
+                        <button class="tab-btn" :class="{ active: activeTab === 'reviews' }" @click="switchTab('reviews')">Đánh giá (128)</button>
                     </div>
 
-                    <div id="description" class="tab-content active">
+                    <div id="description" class="tab-content" :class="{ active: activeTab === 'description' }">
                         <h3>Mô Tả Sản Phẩm</h3>
                         <p>
                             Chảo chống dính cao cấp 28cm là sản phẩm được thiết kế đặc biệt cho các đầu bếp chuyên
@@ -153,7 +250,7 @@
                         </ul>
                     </div>
 
-                    <div id="specs" class="tab-content">
+                    <div id="specs" class="tab-content" :class="{ active: activeTab === 'specs' }">
                         <h3>Thông Số Kỹ Thuật</h3>
                         <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
                             <tr style="border-bottom: 1px solid #ddd;">
@@ -187,7 +284,7 @@
                         </table>
                     </div>
 
-                    <div id="reviews" class="tab-content">
+                    <div id="reviews" class="tab-content" :class="{ active: activeTab === 'reviews' }">
                         <h3>Đánh Giá Sản Phẩm</h3>
                         <div class="reviews-section">
                             <div class="review-item">
@@ -250,40 +347,13 @@
                 <div class="related-products">
                     <h3>Sản Phẩm Liên Quan</h3>
                     <div class="product-grid">
-                        <div class="product-card">
-                            <img src="https://via.placeholder.com/300x250.png?text=Chảo+24cm" alt="Chảo 24cm"
+                        <div v-for="p in relatedProducts" :key="p.id" class="product-card" @click="viewDetail(p)" style="cursor: pointer;">
+                            <img :src="resolveImage(p.image || p.img)" :alt="p.name"
                                 class="product-image">
                             <div class="product-info">
-                                <h4 class="product-name">Chảo Chống Dính 24cm</h4>
-                                <p class="product-price">350,000đ</p>
-                                <button class="add-to-cart-btn">Thêm vào giỏ</button>
-                            </div>
-                        </div>
-                        <div class="product-card">
-                            <img src="https://via.placeholder.com/300x250.png?text=Chảo+32cm" alt="Chảo 32cm"
-                                class="product-image">
-                            <div class="product-info">
-                                <h4 class="product-name">Chảo Chống Dính 32cm</h4>
-                                <p class="product-price">550,000đ</p>
-                                <button class="add-to-cart-btn">Thêm vào giỏ</button>
-                            </div>
-                        </div>
-                        <div class="product-card">
-                            <img src="https://via.placeholder.com/300x250.png?text=Bộ+Chảo" alt="Bộ Chảo"
-                                class="product-image">
-                            <div class="product-info">
-                                <h4 class="product-name">Bộ Chảo 3 Cái</h4>
-                                <p class="product-price">1,200,000đ</p>
-                                <button class="add-to-cart-btn">Thêm vào giỏ</button>
-                            </div>
-                        </div>
-                        <div class="product-card">
-                            <img src="https://via.placeholder.com/300x250.png?text=Xẻng+Vàng" alt="Xẻng Vàng"
-                                class="product-image">
-                            <div class="product-info">
-                                <h4 class="product-name">Xẻng Vàng Cao Cấp</h4>
-                                <p class="product-price">150,000đ</p>
-                                <button class="add-to-cart-btn">Thêm vào giỏ</button>
+                                <h4 class="product-name">{{ p.name }}</h4>
+                                <p class="product-price">{{ p.price }}</p>
+                                <button class="add-to-cart-btn">Xem chi tiết</button>
                             </div>
                         </div>
                     </div>

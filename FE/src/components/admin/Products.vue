@@ -113,27 +113,8 @@ function resolveImage(path) {
   const val = path.trim();
   if (val.startsWith("http://") || val.startsWith("https://")) return val;
 
-  // If path points to img/products, prefer the frontend src path so Vite serves it
-  const m = val.match(/(?:\.\/|\/?)(?:img\/products\/)(.+)$/i);
-  if (m && m[1]) {
-    const filename = m[1];
-    const frontendOrigin =
-      typeof window !== "undefined" && window.location && window.location.origin
-        ? window.location.origin.replace(/\/$/, "")
-        : "";
-    if (frontendOrigin)
-      return frontendOrigin + "/src/components/img/products/" + filename;
-  }
-
-  // get backend origin from axios baseURL (api.defaults.baseURL is like 'http://localhost:3000/api')
-  const apiBase = api.defaults.baseURL || "";
-  const backendOrigin = apiBase.replace(/\/api\/?$/i, "").replace(/\/$/, "");
-  if (val.startsWith("/img")) return backendOrigin + val;
-  if (val.startsWith("./img"))
-    return backendOrigin + "/" + val.replace(/^\.\//, "");
-  if (val.startsWith("img/")) return backendOrigin + "/" + val;
-  // otherwise return as-is (may be data URL)
-  return val;
+  let filename = val.split("/").pop();
+  return `http://localhost:3000/img/products/${filename}`;
 }
 
 function openAddModal() {

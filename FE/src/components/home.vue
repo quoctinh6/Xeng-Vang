@@ -24,10 +24,13 @@ const mapProductToTemplate = (product, categoryMap) => {
   // Convert category name to code using the categoryMap
   let categoryCode = "all";
   if (product.category) {
+    const pCat = String(product.category).toLowerCase();
     const foundCat = categoryMap.find(
-      (cat) => cat.name.toLowerCase() === product.category.toLowerCase()
+      (cat) => 
+        cat.name.toLowerCase() === pCat || 
+        cat.code.toLowerCase() === pCat
     );
-    categoryCode = foundCat ? foundCat.code : product.category.toLowerCase();
+    categoryCode = foundCat ? foundCat.code : pCat;
   }
 
   return {
@@ -73,16 +76,13 @@ const fetchData = async () => {
     // Xử lý dữ liệu trả về (Giả sử API trả về mảng 1 phần tử như code cũ)
     const dataRoot = Array.isArray(rawData) ? rawData[0] : rawData;
 
-    // 2. Lấy danh mục (Map từ categories array, filter ra chỉ các short codes)
+    // 2. Lấy danh mục (Map từ categories array)
     const categoryList = (dataRoot?.categories || [])
-      .filter(
-        (cat) =>
-          cat.code && typeof cat.code === "string" && cat.code.length < 20
-      )
       .map((cat) => ({
-        code: cat.code.toLowerCase(),
+        code: (cat.code || cat.id || String(cat._id || "")).toLowerCase(),
         name: cat.name,
-      }));
+      }))
+      .filter((cat) => cat.code && cat.name);
 
     categories.value = categoryList;
 
@@ -152,6 +152,14 @@ function addToCart(product) {
   } catch (e) {
     console.error("Lỗi lưu giỏ hàng:", e);
   }
+}
+
+function viewProductDetail(product) {
+  sessionStorage.setItem("selectedProduct", JSON.stringify(product));
+  router.push({
+    name: "ProductDetail",
+    params: { id: product.id },
+  });
 }
 
 // Hàm xử lý di chuyển chuột (Parallax)
@@ -301,6 +309,8 @@ onMounted(() => {
             v-for="product in filteredProducts.slice(0, 6)"
             :key="product.id"
             class="product-card"
+            @click="viewProductDetail(product)"
+            style="cursor: pointer;"
           >
             <img
               :src="resolveImage(product.image)"
@@ -318,7 +328,7 @@ onMounted(() => {
               </div>
               <button
                 class="add-to-cart-btn"
-                @click.prevent="addToCart(product)"
+                @click.stop.prevent="addToCart(product)"
               >
                 Thêm vào giỏ
               </button>
